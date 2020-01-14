@@ -150,6 +150,28 @@ const Scene = {
     //Import des textures
     vars.texture = new THREE.TextureLoader().load("./textures/marbre.jpg");
     vars.texture_sol = new THREE.TextureLoader().load("./textures/herbe.jpg");
+
+    Scene.loadFBX(
+      "table.fbx",
+      10,
+      [0, 0, 0],
+      [0, 0, 0],
+      0x1a1a1a,
+      "table",
+      () => {
+        // positionnement trophée
+        let table = new THREE.Group();
+        table.add(Scene.vars.table);
+
+        vars.scene.add(trophy);
+        //Scene.vars.animSpeed = -0.05;
+
+        table.position.z = -50;
+        table.position.y = 10;
+
+        document.querySelector("#loading").remove();
+      }
+    );
     // chargement des objets
     // Scene.loadFBX(
     //   "Socle_Partie1.FBX",
@@ -275,38 +297,6 @@ const Scene = {
     //     );
     //   }
     // );
-    Scene.loadOBJ_obstacles(
-      "obstacle1.obj",
-      2,
-      [0, 0, 0],
-      [0, 0, 0],
-      0xffffff,
-      "obstacle_1",
-      () => {}
-    );
-    Scene.loadOBJ_chevaux(
-      "Horse_Trot.obj",
-      2,
-      [0, 0, 0],
-      [0, 0, 0],
-      0xffffff,
-      "truc",
-      () => {
-        // positionnement trophée
-        let m = new THREE.Group();
-        m.add(Scene.vars.truc);
-
-        vars.scene.add(m);
-        // Scene.vars.animSpeed = -0.05;
-
-        m.position.x = 0;
-        m.position.y = 0;
-        m.position.z = -50;
-        m.rotation.x = -Math.PI / 2;
-
-        document.querySelector("#loading").remove();
-      }
-    );
 
     // gestion redimensionnement
     window.addEventListener("resize", Scene.onWindowResize, false);
@@ -315,10 +305,10 @@ const Scene = {
     vars.controls = new OrbitControls(vars.camera, vars.renderer.domElement);
     vars.controls.minDistance = 300;
     vars.controls.maxDistance = 600;
-    vars.controls.minPolarAngle = Math.PI / 4;
-    vars.controls.maxPolarAngle = Math.PI / 2;
-    vars.controls.minAzimuthAngle = -Math.PI / 4;
-    vars.controls.maxAzimuthAngle = Math.PI / 4;
+    // vars.controls.minPolarAngle = Math.PI / 4;
+    // vars.controls.maxPolarAngle = Math.PI / 2;
+    // vars.controls.minAzimuthAngle = -Math.PI / 4;
+    // vars.controls.maxAzimuthAngle = Math.PI / 4;
     vars.controls.target.set(0, 100, 0);
     vars.controls.update();
 
@@ -346,58 +336,6 @@ const Scene = {
         if (node.isMesh) {
           node.castShadow = true;
           node.receiveShadow = true;
-          if (namespace === "plaquette") {
-            node.material = new THREE.MeshBasicMaterial({
-              map: Scene.vars.texture
-            });
-          }
-          if (namespace === "statuette") {
-            node.material = new THREE.MeshStandardMaterial({
-              color: new THREE.Color(color),
-              roughness: 0.3,
-              metalness: 0.6
-            });
-          }
-          node.material.color = new THREE.Color(color);
-        }
-      });
-
-      data.position.x = position[0];
-      data.position.y = position[1];
-      data.position.z = position[2];
-
-      data.rotation.x = rotation[0];
-      data.rotation.y = rotation[1];
-      data.rotation.z = rotation[2];
-
-      data.scale.x = data.scale.y = data.scale.z = scale;
-
-      Scene.vars[namespace] = data;
-
-      callback();
-    });
-  },
-  loadOBJ_chevaux: (
-    file,
-    scale,
-    position,
-    rotation,
-    color,
-    namespace,
-    callback
-  ) => {
-    let loader = new OBJLoader();
-
-    if (file === undefined) {
-      return;
-    }
-    loader.load("./objets/chevaux/" + file, object => {
-      let data = object;
-
-      data.traverse(node => {
-        if (node.isMesh) {
-          node.castShadow = true;
-          node.receiveShadow = true;
 
           node.material.color = new THREE.Color(color);
         }
@@ -418,88 +356,7 @@ const Scene = {
       callback();
     });
   },
-  loadOBJ_obstacles: (
-    file,
-    scale,
-    position,
-    rotation,
-    color,
-    namespace,
-    callback
-  ) => {
-    let loader = new OBJLoader();
 
-    if (file === undefined) {
-      return;
-    }
-    loader.load("./objets/obstacles/" + file, object => {
-      let data = object;
-
-      data.traverse(node => {
-        if (node.isMesh) {
-          node.castShadow = true;
-          node.receiveShadow = true;
-
-          node.material.color = new THREE.Color(color);
-        }
-      });
-
-      data.position.x = position[0];
-      data.position.y = position[1];
-      data.position.z = position[2];
-
-      data.rotation.x = rotation[0];
-      data.rotation.y = rotation[1];
-      data.rotation.z = rotation[2];
-
-      data.scale.x = data.scale.y = data.scale.z = scale;
-
-      Scene.vars[namespace] = data;
-
-      callback();
-    });
-  },
-  loadOBJ_divers: (
-    file,
-    scale,
-    position,
-    rotation,
-    color,
-    namespace,
-    callback
-  ) => {
-    let loader = new OBJLoader();
-
-    if (file === undefined) {
-      return;
-    }
-    loader.load("./objets/divers/" + file, object => {
-      let data = object;
-
-      data.traverse(node => {
-        if (node.isMesh) {
-          node.castShadow = true;
-          node.receiveShadow = true;
-
-          node.material.color = new THREE.Color(color);
-        }
-      });
-
-      data.position.x = position[0];
-      data.position.y = position[1];
-      data.position.z = position[2];
-
-      data.rotation.x = rotation[0];
-      data.rotation.y = rotation[1];
-      data.rotation.z = rotation[2];
-
-      data.scale.x = data.scale.y = data.scale.z = scale;
-
-      Scene.vars[namespace] = data;
-
-      callback();
-    });
-  },
   // chargement du texte
   loadText: (text, scale, position, rotation, color, namespace, callback) => {
     let loader = new THREE.FontLoader();
