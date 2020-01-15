@@ -3,6 +3,7 @@ import { OrbitControls } from "./vendor/three.js-master/examples/jsm/controls/Or
 import Stats from "./vendor/three.js-master/examples/jsm/libs/stats.module.js";
 import { FBXLoader } from "./vendor/three.js-master/examples/jsm/loaders/FBXLoader.js";
 import { OBJLoader } from "./vendor/three.js-master/examples/jsm/loaders/OBJLoader.js";
+import { AudioLoader } from "./vendor/three.js-master/src/loaders/AudioLoader.js";
 
 const Scene = {
   vars: {
@@ -97,6 +98,23 @@ const Scene = {
     let sphere = new THREE.Mesh(geometry, material);
     vars.scene.add(sphere);
 
+    // Audio
+    // create an AudioListener and add it to the camera
+    var listener = new THREE.AudioListener();
+    vars.camera.add(listener);
+
+    // create a global audio source
+    var sound = new THREE.Audio(listener);
+
+    // load a sound and set it as the Audio object's buffer
+    var audioLoader = new THREE.AudioLoader();
+    audioLoader.load("./musique/Jingle-bells-Version2.mp3", function(buffer) {
+      sound.setBuffer(buffer);
+      sound.setLoop(true);
+      sound.setVolume(0.5);
+      sound.play();
+    });
+
     // ajout des lumieres directionnelles et ses ombres
     let lightIntensity = 0.4;
     let directional1 = new THREE.DirectionalLight(0xffffff, lightIntensity);
@@ -190,40 +208,56 @@ const Scene = {
                   0xfffffa,
                   "bouleB",
                   () => {
-                    let sapin = new THREE.Group();
-                    sapin.add(Scene.vars.sapin);
-                    vars.scene.add(sapin);
+                    Scene.loadFBX(
+                      "boule.fbx",
+                      0.1,
+                      [0, 0, 140],
+                      [0, 0, 0],
+                      0xaaffaa,
+                      "bouleC",
+                      () => {
+                        let sapin = new THREE.Group();
+                        sapin.add(Scene.vars.sapin);
+                        vars.scene.add(sapin);
 
-                    let cadeaux_1 = new THREE.Group();
-                    cadeaux_1.add(Scene.vars.cadeaux);
-                    vars.scene.add(cadeaux_1);
+                        let cadeaux_1 = new THREE.Group();
+                        cadeaux_1.add(Scene.vars.cadeaux);
+                        vars.scene.add(cadeaux_1);
 
-                    let cadeaux_2 = cadeaux_1.clone();
-                    cadeaux_2.position.z = 145;
-                    vars.scene.add(cadeaux_2);
+                        let cadeaux_2 = cadeaux_1.clone();
+                        cadeaux_2.position.z = 145;
+                        vars.scene.add(cadeaux_2);
 
-                    let cadeaux_3 = cadeaux_1.clone();
-                    cadeaux_3.position.z = 45;
-                    vars.scene.add(cadeaux_3);
+                        let cadeaux_3 = cadeaux_1.clone();
+                        cadeaux_3.position.z = 45;
+                        vars.scene.add(cadeaux_3);
 
-                    let boule_1 = new THREE.Group();
-                    boule_1.add(Scene.vars.bouleA);
-                    boule_1.add(Scene.vars.bouleB);
-                    vars.scene.add(boule_1);
+                        let boule_1 = new THREE.Group();
+                        boule_1.add(Scene.vars.bouleA);
+                        boule_1.add(Scene.vars.bouleB);
+                        boule_1.add(Scene.vars.bouleC);
+                        boule_1.add(Scene.vars.bouleD);
+                        vars.scene.add(boule_1);
+                        Scene.vars.boule_1 = boule_1;
 
-                    let boule_2 = boule_1.clone();
-                    boule_2.position.y = 65;
-                    vars.scene.add(boule_2);
+                        let boule_2 = boule_1.clone();
+                        boule_2.position.y = 65;
+                        vars.scene.add(boule_2);
+                        Scene.vars.boule_2 = boule_2;
 
-                    let boule_3 = boule_1.clone();
-                    boule_3.position.y = 55;
-                    vars.scene.add(boule_3);
+                        let boule_3 = boule_1.clone();
+                        boule_3.position.y = 55;
+                        vars.scene.add(boule_3);
+                        Scene.vars.boule_3 = boule_3;
 
-                    let boule_4 = boule_1.clone();
-                    boule_4.position.y = 45;
-                    vars.scene.add(boule_4);
+                        let boule_4 = boule_1.clone();
+                        boule_4.position.y = 45;
+                        vars.scene.add(boule_4);
+                        Scene.vars.boule_4 = boule_4;
 
-                    document.querySelector("#loading").remove();
+                        document.querySelector("#loading").remove();
+                      }
+                    );
                   }
                 );
 
