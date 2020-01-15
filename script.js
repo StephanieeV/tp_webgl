@@ -47,7 +47,7 @@ const Scene = {
       1,
       2000
     );
-    vars.camera.position.set(-1.5, 210, 572);
+    vars.camera.position.set(-1.5, 300, 572);
 
     // creer une lumiere
     let light = new THREE.HemisphereLight(0xffffff, 0x444444, 0.5);
@@ -57,9 +57,16 @@ const Scene = {
     vars.scene.add(light);
 
     // creer un sol
+    //Import des textures
+
+    vars.texture_sol = new THREE.TextureLoader().load(
+      "./textures/plancher.jpg"
+    );
     let mesh = new THREE.Mesh(
       new THREE.PlaneBufferGeometry(2000, 2000),
-      new THREE.MeshLambertMaterial({ color: new THREE.Color(0x888888) })
+      new THREE.MeshLambertMaterial({
+        map: vars.texture_sol
+      })
     );
     mesh.rotation.x = -Math.PI / 2;
     mesh.receiveShadow = false;
@@ -83,7 +90,9 @@ const Scene = {
 
     // creation de la bulle
     let geometry = new THREE.SphereGeometry(1000, 32, 32);
-    let material = new THREE.MeshPhongMaterial({ color: 0xffffff });
+    let material = new THREE.MeshPhongMaterial({
+      color: new THREE.Color(0xaaaaaa)
+    });
     material.side = THREE.DoubleSide;
     let sphere = new THREE.Mesh(geometry, material);
     vars.scene.add(sphere);
@@ -147,29 +156,84 @@ const Scene = {
     // } else {
     //   Scene.vars.text = "DAWIN";
     // }
-    //Import des textures
-    vars.texture = new THREE.TextureLoader().load("./textures/marbre.jpg");
-    vars.texture_sol = new THREE.TextureLoader().load("./textures/herbe.jpg");
 
+    document.querySelector("#loading").remove();
     Scene.loadFBX(
-      "table.fbx",
-      10,
+      "sapin.fbx",
+      0.6,
+      [0, 110, 0],
       [0, 0, 0],
-      [0, 0, 0],
-      0x1a1a1a,
-      "table",
+      0xffffff,
+      "sapin",
       () => {
-        // positionnement trophée
-        let table = new THREE.Group();
-        table.add(Scene.vars.table);
+        Scene.loadFBX(
+          "cadeaux.fbx",
+          1.8,
+          [0, 0, 0],
+          [0, 0, 0],
+          0xaaaaaa,
+          "cadeaux",
+          () => {
+            Scene.loadFBX(
+              "boule.fbx",
+              0.1,
+              [0, 0, 120],
+              [0, 0, 0],
+              0x1aff22,
+              "bouleA",
+              () => {
+                Scene.loadFBX(
+                  "boule.fbx",
+                  0.1,
+                  [0, 0, 130],
+                  [0, 0, 0],
+                  0xfffffa,
+                  "bouleB",
+                  () => {
+                    let sapin = new THREE.Group();
+                    sapin.add(Scene.vars.sapin);
+                    vars.scene.add(sapin);
 
-        vars.scene.add(trophy);
-        //Scene.vars.animSpeed = -0.05;
+                    let cadeaux_1 = new THREE.Group();
+                    cadeaux_1.add(Scene.vars.cadeaux);
+                    vars.scene.add(cadeaux_1);
 
-        table.position.z = -50;
-        table.position.y = 10;
+                    let cadeaux_2 = cadeaux_1.clone();
+                    cadeaux_2.position.z = 145;
+                    vars.scene.add(cadeaux_2);
 
-        document.querySelector("#loading").remove();
+                    let cadeaux_3 = cadeaux_1.clone();
+                    cadeaux_3.position.z = 45;
+                    vars.scene.add(cadeaux_3);
+
+                    let boule_1 = new THREE.Group();
+                    boule_1.add(Scene.vars.bouleA);
+                    boule_1.add(Scene.vars.bouleB);
+                    vars.scene.add(boule_1);
+
+                    let boule_2 = boule_1.clone();
+                    boule_2.position.y = 65;
+                    vars.scene.add(boule_2);
+
+                    let boule_3 = boule_1.clone();
+                    boule_3.position.y = 55;
+                    vars.scene.add(boule_3);
+
+                    let boule_4 = boule_1.clone();
+                    boule_4.position.y = 45;
+                    vars.scene.add(boule_4);
+
+                    document.querySelector("#loading").remove();
+                  }
+                );
+
+                // let cadeaux_3 = cadeaux_1.clone();
+                // cadeaux_3.position.z = 45;
+                // vars.scene.add(cadeaux_3);
+              }
+            );
+          }
+        );
       }
     );
     // chargement des objets
