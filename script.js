@@ -2,7 +2,6 @@ import * as THREE from "./vendor/three.js-master/build/three.module.js";
 import { OrbitControls } from "./vendor/three.js-master/examples/jsm/controls/OrbitControls.js";
 import Stats from "./vendor/three.js-master/examples/jsm/libs/stats.module.js";
 import { FBXLoader } from "./vendor/three.js-master/examples/jsm/loaders/FBXLoader.js";
-import { OBJLoader } from "./vendor/three.js-master/examples/jsm/loaders/OBJLoader.js";
 import { AudioLoader } from "./vendor/three.js-master/src/loaders/AudioLoader.js";
 
 const Scene = {
@@ -24,16 +23,16 @@ const Scene = {
   init: () => {
     let vars = Scene.vars;
 
-    // Preparer le container de la scene
+    // Preparation du container de la scene
     vars.container = document.createElement("div");
     vars.container.classList.add("fullscreen");
     document.body.appendChild(vars.container);
 
-    // creer une scene
+    // Creation d'une scene
     vars.scene = new THREE.Scene();
     vars.scene.background = new THREE.Color(0xa0a0a0);
 
-    // moteur de rendus
+    // Moteur de rendus
     vars.renderer = new THREE.WebGLRenderer({ antialias: true });
     vars.renderer.setPixelRatio(window.devicePixelRatio);
     vars.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -41,7 +40,7 @@ const Scene = {
     vars.renderer.shadowMapSoft = true;
     vars.container.appendChild(vars.renderer.domElement);
 
-    // creer une camera
+    // Creation d'une camera
     vars.camera = new THREE.PerspectiveCamera(
       45,
       window.innerWidth / window.innerHeight,
@@ -50,15 +49,13 @@ const Scene = {
     );
     vars.camera.position.set(-1.5, 300, 572);
 
-    // creer une lumiere
+    // Creation d'une lumiere
     let light = new THREE.HemisphereLight(0xffffff, 0x444444, 0.5);
     light.position.set(0, 700, 0);
-    //light.castShadow = true;
 
     vars.scene.add(light);
 
-    // creer un sol
-    //Import des textures
+    // Creation du sol et import de sa texture
 
     vars.texture_sol = new THREE.TextureLoader().load(
       "./textures/plancher.jpg"
@@ -83,13 +80,7 @@ const Scene = {
     shadowPlane.receiveShadow = true;
     vars.scene.add(shadowPlane);
 
-    // // ajouter des textures helper au sol
-    // let grid = new THREE.GridHelper(2000, 20, 0x000000, 0x000000);
-    // grid.material.opacity = 0.2;
-    // grid.material.transparent = true;
-    // vars.scene.add(grid);
-
-    // creation de la bulle
+    // Creation de la bulle
     let geometry = new THREE.SphereGeometry(1000, 32, 32);
     let material = new THREE.MeshPhongMaterial({
       color: new THREE.Color(0xaaaaaa)
@@ -98,15 +89,10 @@ const Scene = {
     let sphere = new THREE.Mesh(geometry, material);
     vars.scene.add(sphere);
 
-    // Audio
-    // create an AudioListener and add it to the camera
+    // Ajout audio
     var listener = new THREE.AudioListener();
     vars.camera.add(listener);
-
-    // create a global audio source
     var sound = new THREE.Audio(listener);
-
-    // load a sound and set it as the Audio object's buffer
     var audioLoader = new THREE.AudioLoader();
     audioLoader.load("./musique/Jingle-bells-Version2.mp3", function(buffer) {
       sound.setBuffer(buffer);
@@ -115,33 +101,11 @@ const Scene = {
       sound.play();
     });
 
-    // particules
-    // var particules = new THREE.Particle(
-    //   new THREE.ParticleBasicMaterial({
-    //     color: 0xffaa33,
-    //     opacity: 1,
-    //     program: function(context) {
-    //       context.beinPath();
-    //       context.arc(0, 0, 1, 0, (Math.PI = 2), true);
-    //       context.closePath();
-    //       context.fill();
-    //     }
-    //   })
-    // );
-    // particules.position.x = 0;
-    // particules.position.y = 0;
-    // particules.position.z = 0;
-    // vars.scene.add(particules);
-
-    // ajout des lumieres directionnelles et ses ombres
+    // Ajout de la lumiere directionnelle et son ombre
     let lightIntensity = 0.4;
     let directional1 = new THREE.DirectionalLight(0xffffff, lightIntensity);
-    let directional2 = new THREE.DirectionalLight(0xffffff, lightIntensity);
-    let directional3 = new THREE.DirectionalLight(0xffffff, lightIntensity);
 
     directional1.position.set(0, 700, 0);
-    directional2.position.set(-400, 200, 400);
-    directional3.position.set(400, 200, 400);
 
     directional1.castShadow = true;
     let d = 1000;
@@ -153,45 +117,12 @@ const Scene = {
     directional1.shadow.mapSize.width = 4096;
     directional1.shadow.mapSize.height = 4096;
 
-    directional2.castShadow = true;
-    let d2 = 1000;
-    directional2.shadow.camera.left = -d2;
-    directional2.shadow.camera.right = d2;
-    directional2.shadow.camera.top = d2;
-    directional2.shadow.camera.bottom = -d2;
-    directional2.shadow.camera.far = 2000;
-    directional2.shadow.mapSize.width = 4096;
-    directional2.shadow.mapSize.height = 4096;
-
-    directional3.castShadow = true;
-    let d3 = 1000;
-    directional3.shadow.camera.left = -d3;
-    directional3.shadow.camera.right = d3;
-    directional3.shadow.camera.top = d3;
-    directional3.shadow.camera.bottom = -d3;
-    directional3.shadow.camera.far = 2000;
-    directional3.shadow.mapSize.width = 4096;
-    directional3.shadow.mapSize.height = 4096;
+    
 
     vars.scene.add(directional1);
-    vars.scene.add(directional2);
-    vars.scene.add(directional3);
 
-    let helper = new THREE.DirectionalLightHelper(directional1, 5);
-    let helper2 = new THREE.DirectionalLightHelper(directional2, 5);
-    let helper3 = new THREE.DirectionalLightHelper(directional3, 5);
-
-    vars.scene.add(helper);
-    vars.scene.add(helper2);
-    vars.scene.add(helper3);
-    // // recup texte url
-    // let hash = document.location.hash.substr(1);
-    // if (hash.length !== 0) {
-    //   var texthash = hash.substring();
-    //   Scene.vars.text = decodeURI(texthash);
-    // } else {
-    //   Scene.vars.text = "DAWIN";
-    // }
+    
+    
 
     document.querySelector("#loading").remove();
     Scene.loadFBX(
@@ -199,106 +130,153 @@ const Scene = {
       0.7,
       [0, 110, 0],
       [0, 0, 0],
-      0xffffff,
+      0x0c570a,
       "sapin",
       () => {
         Scene.loadFBX(
           "cadeaux.fbx",
           1.8,
-          [0, 0, 0],
+          [0, 1000, 140],
           [0, 0, 0],
           0xaaaaaa,
-          "cadeaux",
+          "cadeauxA",
           () => {
-            Scene.loadFBX(
-              "boule.fbx",
-              0.1,
-              [0, 215, 45],
-              [-Math.PI / 4, 0, 0],
-              0xffd700,
-              "bouleA",
-              () => {
+            Scene.loadFBX("cadeaux.fbx", 1.8, [1300, 0, 0], [0, 0, 0], 0xaaaaaa, "cadeauxB", () => {
+              Scene.loadFBX("cadeaux.fbx", 1.8, [-1300, 0, 0], [0, 0, 0], 0xaaaaaa, "cadeauxC", () => {
                 Scene.loadFBX(
                   "boule.fbx",
                   0.1,
-                  [45, 215, 0],
-                  [0, 0, Math.PI / 4],
-                  0xd1d1d1,
-                  "bouleB",
+                  [0, 215, 45],
+                  [-Math.PI / 4, 0, 0],
+                  0xffd700,
+                  "bouleA",
                   () => {
                     Scene.loadFBX(
                       "boule.fbx",
                       0.1,
-                      [-45, 215, 0],
-                      [0, 0, -Math.PI / 4],
-                      0xa3140f,
-                      "bouleC",
+                      [45, 215, 0],
+                      [0, 0, Math.PI / 4],
+                      0xd1d1d1,
+                      "bouleB",
                       () => {
                         Scene.loadFBX(
                           "boule.fbx",
                           0.1,
-                          [0, 215, -45],
-                          [Math.PI / 4, 0, 0],
-                          0x1546a6,
-                          "bouleD",
+                          [-45, 215, 0],
+                          [0, 0, -Math.PI / 4],
+                          0xa3140f,
+                          "bouleC",
                           () => {
-                            Scene.loadFBX("boule.fbx", 0.1, [0, 125, 65], [-Math.PI / 4, 0, 0], 0xa3140f, "bouleE", () => {
-                              Scene.loadFBX("boule.fbx", 0.1, [65, 125, 0], [0, 0, Math.PI / 4], 0x1546a6, "bouleF", () => {
-                                Scene.loadFBX("boule.fbx", 0.1, [-65, 125, 0], [0, 0, -Math.PI / 4], 0xffd700, "bouleG", () => {
-                                  Scene.loadFBX("boule.fbx", 0.1, [0, 125, -65], [Math.PI / 4, 0, 0], 0xd1d1d1, "bouleH", () => {
-                                    let sapin = new THREE.Group();
-                                    sapin.add(Scene.vars.sapin);
-                                    vars.scene.add(sapin);
-                                    Scene.vars.sapin = sapin;
+                            Scene.loadFBX(
+                              "boule.fbx",
+                              0.1,
+                              [0, 215, -45],
+                              [Math.PI / 4, 0, 0],
+                              0x1546a6,
+                              "bouleD",
+                              () => {
+                                Scene.loadFBX("boule.fbx", 0.1, [0, 125, 65], [-Math.PI / 4, 0, 0], 0xa3140f, "bouleE", () => {
+                                  Scene.loadFBX("boule.fbx", 0.1, [65, 125, 0], [0, 0, Math.PI / 4], 0x1546a6, "bouleF", () => {
+                                    Scene.loadFBX("boule.fbx", 0.1, [-65, 125, 0], [0, 0, -Math.PI / 4], 0xffd700, "bouleG", () => {
+                                      Scene.loadFBX("boule.fbx", 0.1, [0, 125, -65], [Math.PI / 4, 0, 0], 0xd1d1d1, "bouleH", () => {
+                                        let sapin = new THREE.Group();
+                                        sapin.add(Scene.vars.sapin);
+                                        vars.scene.add(sapin);
+                                        Scene.vars.sapin = sapin;
 
-                                    let cadeaux_1 = new THREE.Group();
-                                    cadeaux_1.add(Scene.vars.cadeaux);
-                                    vars.scene.add(cadeaux_1);
-                                    Scene.vars.cadeaux_1 = cadeaux_1;
+                                        let cadeaux_1 = new THREE.Group();
+                                        cadeaux_1.add(Scene.vars.cadeauxA);
+                                        vars.scene.add(cadeaux_1);
+                                        Scene.vars.cadeaux_1 = cadeaux_1;
 
-                                    let cadeaux_2 = cadeaux_1.clone();
-                                    cadeaux_2.position.z = 145;
-                                    vars.scene.add(cadeaux_2);
-                                    Scene.vars.cadeaux_2 = cadeaux_2;
+                                        let cadeaux_2 = new THREE.Group();
+                                        cadeaux_2.add(Scene.vars.cadeauxB);
+                                        cadeaux_2.position.z = -50;
+                                        vars.scene.add(cadeaux_2);
+                                        Scene.vars.cadeaux_2 = cadeaux_2;
 
-                                    let cadeaux_3 = cadeaux_1.clone();
-                                    cadeaux_3.position.z = 45;
-                                    vars.scene.add(cadeaux_3);
-                                    Scene.vars.cadeaux_3 = cadeaux_3;
+                                        let cadeaux_3 = new THREE.Group();
+                                        cadeaux_3.add(Scene.vars.cadeauxC);
+                                        cadeaux_3.position.z = 50;
+                                        vars.scene.add(cadeaux_3);
+                                        Scene.vars.cadeaux_3 = cadeaux_3;
 
-                                    let boule_1 = new THREE.Group();
-                                    boule_1.add(Scene.vars.bouleA);
-                                    boule_1.add(Scene.vars.bouleB);
-                                    boule_1.add(Scene.vars.bouleC);
-                                    boule_1.add(Scene.vars.bouleD);
+                                        let boule_1 = new THREE.Group();
+                                        boule_1.add(Scene.vars.bouleA);
+                                        boule_1.add(Scene.vars.bouleB);
+                                        boule_1.add(Scene.vars.bouleC);
+                                        boule_1.add(Scene.vars.bouleD);
+                                        
+                              
+                                        vars.scene.add(boule_1);
+                                        Scene.vars.boule_1 = boule_1;
+                                        boule_1.children[0].traverse(node => {
+                                        if (node.isMesh) {
+                                          node.material = new THREE.MeshStandardMaterial({
+                                            color: new THREE.Color(0xa3140f),
+                                            roughness: 0.3,
+                                            metalness: 0.6
+                                          });
 
-                                    vars.scene.add(boule_1);
-                                    Scene.vars.boule_1 = boule_1;
+                                          node.material.color = new THREE.Color(0xa3140f);
+                                          }
+                                        });
+                                        let boule_2 = boule_1.clone();
+                                        boule_2.position.y = -45;
+                                        vars.scene.add(boule_2);
+                                        Scene.vars.boule_2 = boule_2;
+                                        boule_2.children.traverse(node => {
+                                          if (node.isMesh) {
+                                            node.material = new THREE.MeshStandardMaterial({
+                                              color: new THREE.Color(0x1546a6),
+                                              roughness: 0.3,
+                                              metalness: 0.6
+                                            });
 
-                                    let boule_2 = boule_1.clone();
-                                    boule_2.position.y = -45;
-                                    vars.scene.add(boule_2);
-                                    Scene.vars.boule_2 = boule_2;
+                                            node.material.color = new THREE.Color(0x1546a6);
+                                          }
+                                        });
+                                        let boule_3 = new THREE.Group();
+                                        boule_3.add(Scene.vars.bouleE);
+                                        boule_3.add(Scene.vars.bouleF);
+                                        boule_3.add(Scene.vars.bouleG);
+                                        boule_3.add(Scene.vars.bouleH);
+                                        vars.scene.add(boule_3);
+                                        Scene.vars.boule_3 = boule_3;
+                                        boule_3.children.traverse(node => {
+                                          if (node.isMesh) {
+                                            node.material = new THREE.MeshStandardMaterial({
+                                              color: new THREE.Color(0xd1d1d1),
+                                              roughness: 0.3,
+                                              metalness: 0.6
+                                            });
 
-                                    let boule_3 = new THREE.Group();
-                                    boule_3.add(Scene.vars.bouleE);
-                                    boule_3.add(Scene.vars.bouleF);
-                                    boule_3.add(Scene.vars.bouleG);
-                                    boule_3.add(Scene.vars.bouleH);
-                                    vars.scene.add(boule_3);
-                                    Scene.vars.boule_3 = boule_3;
+                                            node.material.color = new THREE.Color(0xd1d1d1);
+                                          }
+                                        });
 
-                                    let boule_4 = boule_3.clone();
-                                    boule_4.position.y = -45;
-                                    vars.scene.add(boule_4);
-                                    Scene.vars.boule_4 = boule_4;
+                                        let boule_4 = boule_3.clone();
+                                        boule_4.position.y = -45;
+                                        vars.scene.add(boule_4);
+                                        Scene.vars.boule_4 = boule_4;
+                                        boule_4.children.traverse(node => {
+                                          if (node.isMesh) {
+                                            node.material = new THREE.MeshStandardMaterial({
+                                              color: new THREE.Color(0xffd700),
+                                              roughness: 0.3,
+                                              metalness: 0.6
+                                            });
 
-                                    document.querySelector("#loading").remove();
+                                            node.material.color = new THREE.Color(0xffd700);
+                                          }
+                                        });
+                                        document.querySelector("#loading").remove();
+                                      })
+                                    })         
                                   })
                                 })
                               })
                             })
-                            
                           }
                         );
                       }
@@ -311,157 +289,33 @@ const Scene = {
         );
       }
     );
-    // chargement des objets
-    // Scene.loadFBX(
-    //   "Socle_Partie1.FBX",
-    //   10,
-    //   [0, 0, 0],
-    //   [0, 0, 0],
-    //   0x1a1a1a,
-    //   "socle1",
-    //   () => {
-    //     Scene.loadFBX(
-    //       "Socle_Partie2.FBX",
-    //       10,
-    //       [0, 0, 0],
-    //       [0, 0, 0],
-    //       0x1a1a1a,
-    //       "socle2",
-    //       () => {
-    //         Scene.loadFBX(
-    //           "Statuette.FBX",
-    //           10,
-    //           [0, 0, 0],
-    //           [0, 0, 0],
-    //           0xffd700,
-    //           "statuette",
-    //           () => {
-    //             Scene.loadFBX(
-    //               "Plaquette.FBX",
-    //               10,
-    //               [0, 4, 45],
-    //               [0, 0, 0],
-    //               0xffffff,
-    //               "plaquette",
-    //               () => {
-    //                 Scene.loadFBX(
-    //                   "Logo_Feelity.FBX",
-    //                   10,
-    //                   [45, 22, 0],
-    //                   [0, 0, 0],
-    //                   0xffffff,
-    //                   "logo",
-    //                   () => {
-    //                     Scene.loadText(
-    //                       "DAWIN",
-    //                       10,
-    //                       [0, 23, 46],
-    //                       [0, 0, 0],
-    //                       0x1a1a1a,
-    //                       "texte",
-    //                       () => {
-    //                         // positionnement trophée
-    //                         let trophy = new THREE.Group();
-    //                         trophy.add(Scene.vars.socle1);
-    //                         trophy.add(Scene.vars.socle2);
-    //                         trophy.add(Scene.vars.statuette);
-    //                         trophy.add(Scene.vars.plaquette);
-    //                         trophy.add(Scene.vars.texte);
+   
 
-    //                         let logo2 = Scene.vars.logo.clone();
-    //                         logo2.rotation.z = Math.PI;
-    //                         logo2.position.x = -45;
-
-    //                         Scene.vars.logo2 = logo2;
-    //                         trophy.add(Scene.vars.logo);
-    //                         trophy.add(logo2);
-
-    //                         vars.scene.add(trophy);
-    //                         Scene.vars.animSpeed = -0.05;
-
-    //                         trophy.position.z = -50;
-    //                         trophy.position.y = 10;
-    //                         Scene.vars.goldGroup = trophy;
-
-    //                         let trophy2 = trophy.clone();
-    //                         trophy2.position.x = -200;
-    //                         trophy2.position.y = 10;
-    //                         trophy2.rotation.y = Math.PI / 4;
-
-    //                         trophy2.children[2].traverse(node => {
-    //                           if (node.isMesh) {
-    //                             node.material = new THREE.MeshStandardMaterial({
-    //                               color: new THREE.Color(0xc0c0c0),
-    //                               roughness: 0.3,
-    //                               metalness: 0.6
-    //                             });
-
-    //                             node.material.color = new THREE.Color(0xc0c0c0);
-    //                           }
-    //                         });
-    //                         vars.scene.add(trophy2);
-    //                         Scene.vars.animSpeed = -0.05;
-    //                         Scene.vars.silverGroupe = trophy2;
-
-    //                         let trophy3 = trophy.clone();
-    //                         trophy3.position.x = 200;
-    //                         trophy3.position.y = 10;
-    //                         trophy3.rotation.y = -Math.PI / 4;
-    //                         trophy3.children[2].traverse(node => {
-    //                           if (node.isMesh) {
-    //                             node.material = new THREE.MeshStandardMaterial({
-    //                               color: new THREE.Color(0xcd7f32),
-    //                               roughness: 0.3,
-    //                               metalness: 0.6
-    //                             });
-
-    //                             node.material.color = new THREE.Color(0xcd7f32);
-    //                           }
-    //                         });
-
-    //                         vars.scene.add(trophy3);
-    //                         Scene.vars.animSpeed = -0.05;
-    //                         Scene.vars.bronzeGroupe = trophy3;
-
-    //                         document.querySelector("#loading").remove();
-    //                       }
-    //                     );
-    //                   }
-    //                 );
-    //               }
-    //             );
-    //           }
-    //         );
-    //       }
-    //     );
-    //   }
-    // );
-
-    // gestion redimensionnement
+    // Gestion du redimensionnement
     window.addEventListener("resize", Scene.onWindowResize, false);
 
-    // mise en place controles
+    // Mise en place des controles
     vars.controls = new OrbitControls(vars.camera, vars.renderer.domElement);
     vars.controls.minDistance = 500;
     vars.controls.maxDistance = 1000;
-    // vars.controls.minPolarAngle = Math.PI / 4;
-    // vars.controls.maxPolarAngle = Math.PI / 2;
-    // vars.controls.minAzimuthAngle = -Math.PI / 4;
-    // vars.controls.maxAzimuthAngle = Math.PI / 4;
+    vars.controls.minPolarAngle = Math.PI / 4;
+    vars.controls.maxPolarAngle = Math.PI / 2;
+    vars.controls.minAzimuthAngle = -Math.PI / 4;
+    vars.controls.maxAzimuthAngle = Math.PI / 4;
     vars.controls.target.set(0, 100, 0);
     vars.controls.update();
 
-    // ajout des stats
+    // Ajout des stats
     vars.stats = new Stats();
     vars.container.appendChild(vars.stats.dom);
 
     Scene.animate();
 
-    // ajout on mouse hover
+    // Ajout du on mouse hover
     window.addEventListener("mousemove", Scene.onMouseMove, false);
   },
 
-  // chargement des objets
+  // Chargement des objets
   loadFBX: (file, scale, position, rotation, color, namespace, callback) => {
     let loader = new FBXLoader();
 
@@ -496,95 +350,40 @@ const Scene = {
     });
   },
 
-  // chargement du texte
-  loadText: (text, scale, position, rotation, color, namespace, callback) => {
-    let loader = new THREE.FontLoader();
-    loader.load(
-      "./vendor/three.js-master/examples/fonts/helvetiker_regular.typeface.json",
-      font => {
-        let geometry = new THREE.TextGeometry(text, {
-          font: font,
-          size: 1,
-          height: 0.1,
-          curveSegments: 1,
-          bevelThickness: 1,
-          bevelSize: 1,
-          bevelEnabled: false
-        });
-
-        geometry.computeBoundingBox();
-        let offset = geometry.boundingBox.getCenter().negate();
-        geometry.translate(offset.x, offset.y, offset.z);
-
-        let mesh = new THREE.Mesh(
-          geometry,
-          new THREE.MeshBasicMaterial({ color: new THREE.Color(color) })
-        );
-        mesh.position.x = position[0];
-        mesh.position.y = position[1];
-        mesh.position.z = position[2];
-
-        mesh.rotation.x = rotation[0];
-        mesh.rotation.y = rotation[1];
-        mesh.rotation.z = rotation[2];
-
-        mesh.scale.x = mesh.scale.y = mesh.scale.z = scale;
-
-        Scene.vars[namespace] = mesh;
-
-        callback();
-      }
-    );
-
-    // let hash = document.location.hash.substr(1);
-    // if (hash.length !== 0) {
-    //   var texthash = hash.substring();
-    //   Scene.vars.text = decodeURI(texthash);
-    // } else {
-    //   Scene.vars.text = "DAWIN";
-    // }
-  },
-
-  // gestion redimensionnement
+  // Gestion du redimensionnement
   onWindowResize: () => {
     let vars = Scene.vars;
     vars.camera.aspect = window.innerWidth / window.innerHeight;
     vars.camera.updateProjectionMatrix();
     vars.renderer.setSize(window.innerWidth, window.innerHeight);
   },
+  // Gestion des animations
   customAnimation: () => {
-    let vars = Scene.vars;
-    // vars.animPurcent = vars.animPurcent + vars.animSpeed;
-    // if (vars.animPurcent > 1) {
-    //   vars.animPurcent = 1;
-    // }
-    // if (vars.animPurcent < 0) {
-    //   vars.animPurcent = 0;
-    // }
-    // if (vars.animPurcent <= 0.33) {
-    //   vars.plaquette.position.z = 45 + 25 * 3 * vars.animPurcent;
-    //   vars.texte.position.z = 46 + 25 * 3 * vars.animPurcent;
-    // }
-    // if (vars.animPurcent >= 0.2 && vars.animPurcent <= 0.75) {
-    //   let purcent = (Scene.vars.animPurcent - 0.2) / 0.55;
-    //   vars.socle1.position.x = 25 * purcent;
-    //   vars.socle2.position.x = -25 * purcent;
-    //   vars.logo.position.x = 45 + 50 * purcent;
-    //   vars.logo2.position.x = -45 - 50 * purcent;
-    // } else if (vars.animPurcent < 0.2) {
-    //   vars.socle1.position.x = 0;
-    //   vars.socle2.position.x = 0;
-    //   vars.logo.position.x = 45;
-    //   vars.logo2.position.x = -45;
-    // }
-    // if (vars.animPurcent >= 0.4) {
-    //   let purcent = (Scene.vars.animPurcent - 0.4) / 0.6;
-    //   vars.statuette.position.y = 50 * purcent;
-    // } else if (vars.animPurcent < 0.7) {
-    //   vars.statuette.position.y = 0;
-    // }
+    
+    Scene.vars.animPurcent = Scene.vars.animPurcent + Scene.vars.animSpeed;
+    if (Scene.vars.animPurcent > 1) {
+      Scene.vars.animPurcent = 1;
+    }
+    if (Scene.vars.animPurcent < 0) {
+      Scene.vars.animPurcent = 0;
+    }
+    if (Scene.vars.animPurcent <= 0.33) {
+      Scene.vars.cadeaux_1.position.y =-3300  * Scene.vars.animPurcent;
+    }
+    if (Scene.vars.animPurcent >= 0.2 && Scene.vars.animPurcent <= 0.75) {
+      let purcent = (Scene.vars.animPurcent - 0.2) / 0.55;
+      Scene.vars.cadeaux_2.position.x = -1280 * purcent;
+    } else if (Scene.vars.animPurcent < 0.2) {
+      Scene.vars.cadeaux_2.position.x = 0;
+    }
+    if (Scene.vars.animPurcent >= 0.4) {
+      let purcent = (Scene.vars.animPurcent - 0.4) / 0.6;
+      Scene.vars.cadeaux_3.position.x = 1100 * purcent;
+    } else if (Scene.vars.animPurcent < 0.7) {
+      Scene.vars.cadeaux_3.position.x = 0;
+    }
   },
-  // lancement animation
+  // Lancement de l'animation
   animate: () => {
     requestAnimationFrame(Scene.animate);
     Scene.vars.raycaster.setFromCamera(Scene.vars.mouse, Scene.vars.camera);
@@ -598,55 +397,13 @@ const Scene = {
       );
 
       if (intersects.length > 0) {
-        console.log("ok")
-        // Scene.vars.animSpeed = 0.05;
+        
         for (var i = 0; i < intersects.length; i++) {
-
-          intersects[i].object.material.color.set(0xdddddd);
-
+          intersects[i].object.material.color.set(0x761990);
         }
 
-        // intersects[0].object.material.color.set(0xff0000);
-        // intersects[1].object.material.color.set(0xff0000);
-        // intersects[2].object.material.color.set(0xff0000);
-        // intersects[3].object.material.color.set(0xff0000);
-
-        
-        
-        // Scene.vars.animPurcent = 0;
-        // Scene.vars.animPurcent = Scene.vars.animPurcent + Scene.vars.animSpeed;
-        //Scene.vars.goldGroup.children[0].position.x = 25;
-        // Scene.vars.goldGroup.children[0].position.x +=
-        //   Scene.vars.animSpeed * 50;
-        // Scene.vars.goldGroup.children[1].position.x = -25;
-        // Scene.vars.goldGroup.children[2].position.y = 75;
-        // Scene.vars.goldGroup.children[3].position.z = 100;
-        // Scene.vars.goldGroup.children[4].position.x = 100;
-        // Scene.vars.goldGroup.children[5].position.x = -100;
-      } else {
-        console.log("pas ok")
-       
-
-        //Scene.vars.animSpeed = -0.05;
-        // Scene.vars.animPurcent = 0;
-        // Scene.vars.animPurcent = Scene.vars.animPurcent + Scene.vars.animSpeed;
-        // Scene.vars.goldGroup.children[0].position.x +=
-        //   Scene.vars.animSpeed * 50;
-        // Scene.vars.goldGroup.children[1].position.x = 0;
-        // Scene.vars.goldGroup.children[2].position.y = 0;
-        // Scene.vars.goldGroup.children[3].position.z = 45;
-        // Scene.vars.goldGroup.children[4].position.x = 45;
-        // Scene.vars.goldGroup.children[5].position.x = -45;
-      }
-
-      // let mouse = new THREE.Vector3(Scene.vars.mouse.x, Scene.vars.mouse.y, 0);
-      // mouse.unproject(Scene.vars.camera);
-      // let ray = new THREE.Raycaster(
-      //   Scene.vars.camera.position,
-      //   mouse.sub(Scene.vars.camera.position).normalize()
-      // );
-      // let helper = new THREE.ArrowHelper(ray, 5);
-      // Scene.vars.scene.add(helper);
+      } 
+      
     }
     if (Scene.vars.boule_2 != undefined) {
       Scene.customAnimation();
@@ -657,55 +414,13 @@ const Scene = {
       );
 
       if (intersects.length > 0) {
-        console.log("ok")
-        // Scene.vars.animSpeed = 0.05;
         for (var i = 0; i < intersects.length; i++) {
 
-          intersects[i].object.material.color.set(0xdddddd);
+          intersects[i].object.material.color.set(0xed9620);
 
         }
+      } 
 
-        // intersects[0].object.material.color.set(0xff0000);
-        // intersects[1].object.material.color.set(0xff0000);
-        // intersects[2].object.material.color.set(0xff0000);
-        // intersects[3].object.material.color.set(0xff0000);
-
-
-
-        // Scene.vars.animPurcent = 0;
-        // Scene.vars.animPurcent = Scene.vars.animPurcent + Scene.vars.animSpeed;
-        //Scene.vars.goldGroup.children[0].position.x = 25;
-        // Scene.vars.goldGroup.children[0].position.x +=
-        //   Scene.vars.animSpeed * 50;
-        // Scene.vars.goldGroup.children[1].position.x = -25;
-        // Scene.vars.goldGroup.children[2].position.y = 75;
-        // Scene.vars.goldGroup.children[3].position.z = 100;
-        // Scene.vars.goldGroup.children[4].position.x = 100;
-        // Scene.vars.goldGroup.children[5].position.x = -100;
-      } else {
-        console.log("pas ok")
-
-
-        //Scene.vars.animSpeed = -0.05;
-        // Scene.vars.animPurcent = 0;
-        // Scene.vars.animPurcent = Scene.vars.animPurcent + Scene.vars.animSpeed;
-        // Scene.vars.goldGroup.children[0].position.x +=
-        //   Scene.vars.animSpeed * 50;
-        // Scene.vars.goldGroup.children[1].position.x = 0;
-        // Scene.vars.goldGroup.children[2].position.y = 0;
-        // Scene.vars.goldGroup.children[3].position.z = 45;
-        // Scene.vars.goldGroup.children[4].position.x = 45;
-        // Scene.vars.goldGroup.children[5].position.x = -45;
-      }
-
-      // let mouse = new THREE.Vector3(Scene.vars.mouse.x, Scene.vars.mouse.y, 0);
-      // mouse.unproject(Scene.vars.camera);
-      // let ray = new THREE.Raycaster(
-      //   Scene.vars.camera.position,
-      //   mouse.sub(Scene.vars.camera.position).normalize()
-      // );
-      // let helper = new THREE.ArrowHelper(ray, 5);
-      // Scene.vars.scene.add(helper);
     }
     if (Scene.vars.boule_3 != undefined) {
       Scene.customAnimation();
@@ -716,55 +431,14 @@ const Scene = {
       );
 
       if (intersects.length > 0) {
-        console.log("ok")
-        // Scene.vars.animSpeed = 0.05;
+        
         for (var i = 0; i < intersects.length; i++) {
 
-          intersects[i].object.material.color.set(0xdddddd);
+          intersects[i].object.material.color.set(0x1c8e1d);
 
         }
 
-        // intersects[0].object.material.color.set(0xff0000);
-        // intersects[1].object.material.color.set(0xff0000);
-        // intersects[2].object.material.color.set(0xff0000);
-        // intersects[3].object.material.color.set(0xff0000);
-
-
-
-        // Scene.vars.animPurcent = 0;
-        // Scene.vars.animPurcent = Scene.vars.animPurcent + Scene.vars.animSpeed;
-        //Scene.vars.goldGroup.children[0].position.x = 25;
-        // Scene.vars.goldGroup.children[0].position.x +=
-        //   Scene.vars.animSpeed * 50;
-        // Scene.vars.goldGroup.children[1].position.x = -25;
-        // Scene.vars.goldGroup.children[2].position.y = 75;
-        // Scene.vars.goldGroup.children[3].position.z = 100;
-        // Scene.vars.goldGroup.children[4].position.x = 100;
-        // Scene.vars.goldGroup.children[5].position.x = -100;
-      } else {
-        console.log("pas ok")
-
-
-        //Scene.vars.animSpeed = -0.05;
-        // Scene.vars.animPurcent = 0;
-        // Scene.vars.animPurcent = Scene.vars.animPurcent + Scene.vars.animSpeed;
-        // Scene.vars.goldGroup.children[0].position.x +=
-        //   Scene.vars.animSpeed * 50;
-        // Scene.vars.goldGroup.children[1].position.x = 0;
-        // Scene.vars.goldGroup.children[2].position.y = 0;
-        // Scene.vars.goldGroup.children[3].position.z = 45;
-        // Scene.vars.goldGroup.children[4].position.x = 45;
-        // Scene.vars.goldGroup.children[5].position.x = -45;
-      }
-
-      // let mouse = new THREE.Vector3(Scene.vars.mouse.x, Scene.vars.mouse.y, 0);
-      // mouse.unproject(Scene.vars.camera);
-      // let ray = new THREE.Raycaster(
-      //   Scene.vars.camera.position,
-      //   mouse.sub(Scene.vars.camera.position).normalize()
-      // );
-      // let helper = new THREE.ArrowHelper(ray, 5);
-      // Scene.vars.scene.add(helper);
+      } 
     }
     
     if (Scene.vars.boule_4 != undefined) {
@@ -776,189 +450,36 @@ const Scene = {
       );
 
       if (intersects.length > 0) {
-        console.log("ok")
-        // Scene.vars.animSpeed = 0.05;
         for (var i = 0; i < intersects.length; i++) {
 
-          intersects[i].object.material.color.set(0xdddddd);
+          intersects[i].object.material.color.set(0x8e1c8e);
 
         }
 
-        // intersects[0].object.material.color.set(0xff0000);
-        // intersects[1].object.material.color.set(0xff0000);
-        // intersects[2].object.material.color.set(0xff0000);
-        // intersects[3].object.material.color.set(0xff0000);
+      } 
 
-
-
-        // Scene.vars.animPurcent = 0;
-        // Scene.vars.animPurcent = Scene.vars.animPurcent + Scene.vars.animSpeed;
-        //Scene.vars.goldGroup.children[0].position.x = 25;
-        // Scene.vars.goldGroup.children[0].position.x +=
-        //   Scene.vars.animSpeed * 50;
-        // Scene.vars.goldGroup.children[1].position.x = -25;
-        // Scene.vars.goldGroup.children[2].position.y = 75;
-        // Scene.vars.goldGroup.children[3].position.z = 100;
-        // Scene.vars.goldGroup.children[4].position.x = 100;
-        // Scene.vars.goldGroup.children[5].position.x = -100;
-      } else {
-        console.log("pas ok")
-
-
-        //Scene.vars.animSpeed = -0.05;
-        // Scene.vars.animPurcent = 0;
-        // Scene.vars.animPurcent = Scene.vars.animPurcent + Scene.vars.animSpeed;
-        // Scene.vars.goldGroup.children[0].position.x +=
-        //   Scene.vars.animSpeed * 50;
-        // Scene.vars.goldGroup.children[1].position.x = 0;
-        // Scene.vars.goldGroup.children[2].position.y = 0;
-        // Scene.vars.goldGroup.children[3].position.z = 45;
-        // Scene.vars.goldGroup.children[4].position.x = 45;
-        // Scene.vars.goldGroup.children[5].position.x = -45;
-      }
-
-      // let mouse = new THREE.Vector3(Scene.vars.mouse.x, Scene.vars.mouse.y, 0);
-      // mouse.unproject(Scene.vars.camera);
-      // let ray = new THREE.Raycaster(
-      //   Scene.vars.camera.position,
-      //   mouse.sub(Scene.vars.camera.position).normalize()
-      // );
-      // let helper = new THREE.ArrowHelper(ray, 5);
-      // Scene.vars.scene.add(helper);
     }
-    if (Scene.vars.boule_3 != undefined) {
+    if (Scene.vars.sapin != undefined) {
       Scene.customAnimation();
 
       var intersects = Scene.vars.raycaster.intersectObjects(
-        Scene.vars.boule_3.children,
+        Scene.vars.sapin.children,
         true
       );
 
       if (intersects.length > 0) {
-        console.log("ok")
-        // Scene.vars.animSpeed = 0.05;
-        for (var i = 0; i < intersects.length; i++) {
+        
+        Scene.vars.animSpeed = 0.05;
+        
 
-          intersects[i].object.material.color.set(0xdddddd);
-
-        }
-
-        // intersects[0].object.material.color.set(0xff0000);
-        // intersects[1].object.material.color.set(0xff0000);
-        // intersects[2].object.material.color.set(0xff0000);
-        // intersects[3].object.material.color.set(0xff0000);
-
-
-
-        // Scene.vars.animPurcent = 0;
-        // Scene.vars.animPurcent = Scene.vars.animPurcent + Scene.vars.animSpeed;
-        //Scene.vars.goldGroup.children[0].position.x = 25;
-        // Scene.vars.goldGroup.children[0].position.x +=
-        //   Scene.vars.animSpeed * 50;
-        // Scene.vars.goldGroup.children[1].position.x = -25;
-        // Scene.vars.goldGroup.children[2].position.y = 75;
-        // Scene.vars.goldGroup.children[3].position.z = 100;
-        // Scene.vars.goldGroup.children[4].position.x = 100;
-        // Scene.vars.goldGroup.children[5].position.x = -100;
       } else {
-        console.log("pas ok")
 
-
-        //Scene.vars.animSpeed = -0.05;
-        // Scene.vars.animPurcent = 0;
-        // Scene.vars.animPurcent = Scene.vars.animPurcent + Scene.vars.animSpeed;
-        // Scene.vars.goldGroup.children[0].position.x +=
-        //   Scene.vars.animSpeed * 50;
-        // Scene.vars.goldGroup.children[1].position.x = 0;
-        // Scene.vars.goldGroup.children[2].position.y = 0;
-        // Scene.vars.goldGroup.children[3].position.z = 45;
-        // Scene.vars.goldGroup.children[4].position.x = 45;
-        // Scene.vars.goldGroup.children[5].position.x = -45;
+        Scene.vars.animSpeed = -0.05;
+       
       }
 
-      // let mouse = new THREE.Vector3(Scene.vars.mouse.x, Scene.vars.mouse.y, 0);
-      // mouse.unproject(Scene.vars.camera);
-      // let ray = new THREE.Raycaster(
-      //   Scene.vars.camera.position,
-      //   mouse.sub(Scene.vars.camera.position).normalize()
-      // );
-      // let helper = new THREE.ArrowHelper(ray, 5);
-      // Scene.vars.scene.add(helper);
+    
     }
-    // if (Scene.vars.silverGroupe != undefined) {
-    //   var intersects = Scene.vars.raycaster.intersectObjects(
-    //     Scene.vars.silverGroupe.children,
-    //     true
-    //   );
-
-    //   //   for (var i = 0; i < intersects.length; i++) {
-    //   //     intersects[i].object.material.color.set(0xff0000);
-    //   //   }
-    //   Scene.vars.animPurcent = Scene.vars.animPurcent + Scene.vars.animSpeed;
-    //   if (intersects.length > 0) {
-    //     Scene.vars.animSpeed = 0.05;
-    //     Scene.vars.silverGroupe.children[0].position.x = 25;
-    //     Scene.vars.silverGroupe.children[1].position.x = -25;
-    //     Scene.vars.silverGroupe.children[2].position.y = 75;
-    //     Scene.vars.silverGroupe.children[3].position.z = 100;
-    //     Scene.vars.silverGroupe.children[4].position.x = 100;
-    //     Scene.vars.silverGroupe.children[5].position.x = -100;
-    //   } else {
-    //     Scene.vars.animSpeed = -0.05;
-    //     Scene.vars.silverGroupe.children[0].position.x = 0;
-    //     Scene.vars.silverGroupe.children[1].position.x = 0;
-    //     Scene.vars.silverGroupe.children[2].position.y = 0;
-    //     Scene.vars.silverGroupe.children[3].position.z = 45;
-    //     Scene.vars.silverGroupe.children[4].position.x = 45;
-    //     Scene.vars.silverGroupe.children[5].position.x = -45;
-    //   }
-
-    //   let mouse = new THREE.Vector3(Scene.vars.mouse.x, Scene.vars.mouse.y, 0);
-    //   mouse.unproject(Scene.vars.camera);
-    //   let ray = new THREE.Raycaster(
-    //     Scene.vars.camera.position,
-    //     mouse.sub(Scene.vars.camera.position).normalize()
-    //   );
-    //   let helper = new THREE.ArrowHelper(ray, 5);
-    //   Scene.vars.scene.add(helper);
-    // }
-    // if (Scene.vars.bronzeGroupe != undefined) {
-    //   var intersects = Scene.vars.raycaster.intersectObjects(
-    //     Scene.vars.bronzeGroupe.children,
-    //     true
-    //   );
-
-    //   //   for (var i = 0; i < intersects.length; i++) {
-    //   //     intersects[i].object.material.color.set(0xff0000);
-    //   //   }
-
-    //   if (intersects.length > 0) {
-    //     Scene.vars.animSpeed = 0.05;
-    //     Scene.vars.bronzeGroupe.children[0].position.x = 25;
-    //     Scene.vars.bronzeGroupe.children[1].position.x = -25;
-    //     Scene.vars.bronzeGroupe.children[2].position.y = 75;
-    //     Scene.vars.bronzeGroupe.children[3].position.z = 100;
-    //     Scene.vars.bronzeGroupe.children[4].position.x = 100;
-    //     Scene.vars.bronzeGroupe.children[5].position.x = -100;
-    //   } else {
-    //     Scene.vars.animSpeed = -0.05;
-    //     Scene.vars.bronzeGroupe.children[0].position.x = 0;
-    //     Scene.vars.bronzeGroupe.children[1].position.x = 0;
-    //     Scene.vars.bronzeGroupe.children[2].position.y = 0;
-    //     Scene.vars.bronzeGroupe.children[3].position.z = 45;
-    //     Scene.vars.bronzeGroupe.children[4].position.x = 45;
-    //     Scene.vars.bronzeGroupe.children[5].position.x = -45;
-    //   }
-
-    //   let mouse = new THREE.Vector3(Scene.vars.mouse.x, Scene.vars.mouse.y, 0);
-    //   mouse.unproject(Scene.vars.camera);
-    //   let ray = new THREE.Raycaster(
-    //     Scene.vars.camera.position,
-    //     mouse.sub(Scene.vars.camera.position).normalize()
-    //   );
-    //   let helper = new THREE.ArrowHelper(ray, 5);
-    //   Scene.vars.scene.add(helper);
-    // }
 
     Scene.render();
   },
