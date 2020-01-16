@@ -83,7 +83,7 @@ const Scene = {
     // Creation de la bulle
     let geometry = new THREE.SphereGeometry(1000, 32, 32);
     let material = new THREE.MeshPhongMaterial({
-      color: new THREE.Color(0xaaaaaa)
+      color: new THREE.Color(0xefdbf1)
     });
     material.side = THREE.DoubleSide;
     let sphere = new THREE.Mesh(geometry, material);
@@ -105,7 +105,7 @@ const Scene = {
     let lightIntensity = 0.4;
     let directional1 = new THREE.DirectionalLight(0xffffff, lightIntensity);
 
-    directional1.position.set(0, 700, 0);
+    directional1.position.set(-40, 300, 240);
 
     directional1.castShadow = true;
     let d = 1000;
@@ -117,14 +117,8 @@ const Scene = {
     directional1.shadow.mapSize.width = 4096;
     directional1.shadow.mapSize.height = 4096;
 
-    
-
     vars.scene.add(directional1);
 
-    
-    
-
-    document.querySelector("#loading").remove();
     Scene.loadFBX(
       "sapin.fbx",
       0.7,
@@ -138,11 +132,11 @@ const Scene = {
           1.8,
           [0, 1000, 140],
           [0, 0, 0],
-          0xaaaaaa,
+          0xffffff,
           "cadeauxA",
           () => {
-            Scene.loadFBX("cadeaux.fbx", 1.8, [1300, 0, 0], [0, 0, 0], 0xaaaaaa, "cadeauxB", () => {
-              Scene.loadFBX("cadeaux.fbx", 1.8, [-1300, 0, 0], [0, 0, 0], 0xaaaaaa, "cadeauxC", () => {
+            Scene.loadFBX("cadeaux.fbx", 1.8, [1300, 0, 0], [0, 0, 0], 0xffffff, "cadeauxB", () => {
+              Scene.loadFBX("cadeaux.fbx", 1.8, [-1300, 0, 0], [0, 0, 0], 0xffffff, "cadeauxC", () => {
                 Scene.loadFBX(
                   "boule.fbx",
                   0.1,
@@ -182,23 +176,66 @@ const Scene = {
                                         let sapin = new THREE.Group();
                                         sapin.add(Scene.vars.sapin);
                                         vars.scene.add(sapin);
+                                        sapin.children[0].traverse(node => {
+                                        if (node.isMesh) {
+                                          node.material = new THREE.MeshStandardMaterial({
+                                            color: new THREE.Color(0x0c570a)
+                                          });
+
+                                          node.material.color = new THREE.Color(0x0c570a);
+                                          }
+                                        });
                                         Scene.vars.sapin = sapin;
 
                                         let cadeaux_1 = new THREE.Group();
                                         cadeaux_1.add(Scene.vars.cadeauxA);
                                         vars.scene.add(cadeaux_1);
+                                        cadeaux_1.children[0].traverse(node => {
+                                          if (node.isMesh) {
+                                            node.material = new THREE.MeshStandardMaterial({
+                                              map: new THREE.TextureLoader().load(
+                                                "./textures/papier_cadeaux.jpg"
+                                              )
+                                            });
+
+                                            node.material.color = new THREE.Color(0xd1d1d1);
+                                          }
+                                        });
+
                                         Scene.vars.cadeaux_1 = cadeaux_1;
 
                                         let cadeaux_2 = new THREE.Group();
                                         cadeaux_2.add(Scene.vars.cadeauxB);
                                         cadeaux_2.position.z = -50;
                                         vars.scene.add(cadeaux_2);
+                                        cadeaux_2.children[0].traverse(node => {
+                                          if (node.isMesh) {
+                                            node.material = new THREE.MeshStandardMaterial({
+                                              map: new THREE.TextureLoader().load(
+                                                "./textures/papier_cadeaux.jpg"
+                                              )
+                                            });
+
+                                            node.material.color = new THREE.Color(0xd1d1d1);
+                                          }
+                                        });
                                         Scene.vars.cadeaux_2 = cadeaux_2;
 
                                         let cadeaux_3 = new THREE.Group();
                                         cadeaux_3.add(Scene.vars.cadeauxC);
                                         cadeaux_3.position.z = 50;
                                         vars.scene.add(cadeaux_3);
+                                        cadeaux_3.children[0].traverse(node => {
+                                          if (node.isMesh) {
+                                            node.material = new THREE.MeshStandardMaterial({
+                                              map: new THREE.TextureLoader().load(
+                                                "./textures/papier_cadeaux.jpg"
+                                              )
+                                            });
+
+                                            node.material.color = new THREE.Color(0xd1d1d1);
+                                          }
+                                        });
                                         Scene.vars.cadeaux_3 = cadeaux_3;
 
                                         let boule_1 = new THREE.Group();
@@ -221,11 +258,12 @@ const Scene = {
                                           node.material.color = new THREE.Color(0xa3140f);
                                           }
                                         });
+                                        
                                         let boule_2 = boule_1.clone();
                                         boule_2.position.y = -45;
                                         vars.scene.add(boule_2);
                                         Scene.vars.boule_2 = boule_2;
-                                        boule_2.children.traverse(node => {
+                                        boule_2.children[2].traverse(node => {
                                           if (node.isMesh) {
                                             node.material = new THREE.MeshStandardMaterial({
                                               color: new THREE.Color(0x1546a6),
@@ -243,7 +281,7 @@ const Scene = {
                                         boule_3.add(Scene.vars.bouleH);
                                         vars.scene.add(boule_3);
                                         Scene.vars.boule_3 = boule_3;
-                                        boule_3.children.traverse(node => {
+                                        boule_3.children[1].traverse(node => {
                                           if (node.isMesh) {
                                             node.material = new THREE.MeshStandardMaterial({
                                               color: new THREE.Color(0xd1d1d1),
@@ -259,7 +297,7 @@ const Scene = {
                                         boule_4.position.y = -45;
                                         vars.scene.add(boule_4);
                                         Scene.vars.boule_4 = boule_4;
-                                        boule_4.children.traverse(node => {
+                                        boule_4.children[3].traverse(node => {
                                           if (node.isMesh) {
                                             node.material = new THREE.MeshStandardMaterial({
                                               color: new THREE.Color(0xffd700),
@@ -349,7 +387,6 @@ const Scene = {
       callback();
     });
   },
-
   // Gestion du redimensionnement
   onWindowResize: () => {
     let vars = Scene.vars;

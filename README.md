@@ -1,7 +1,7 @@
 # Ma scene
 
 C'est une scene classique sur le thème de noël.
-
+(Oubliez pas de mettre le son de votre pc)
 # Interactions
 
 Quand on met la souris sur le sapin, des cadeaux apparaissent.
